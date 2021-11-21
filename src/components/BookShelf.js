@@ -11,7 +11,7 @@ const BookShelf = ({ books, bookShelfTitle, updateBookShelf }) => {
 				<ol className="books-grid">
 					{books &&
 						books.map((book) => (
-							<li key={book.id}>
+							<li key={book?.id}>
 								<Book book={book} updateBookShelf={updateBookShelf} />
 							</li>
 						))}

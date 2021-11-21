@@ -16,10 +16,7 @@ const Book = ({ book, updateBookShelf }) => {
 							}}
 						/>
 						<div className="book-shelf-changer">
-							<select
-								value={book.shelf || "none"}
-								onChange={(e) => updateBookShelf(book, e.target.value)}
-							>
+							<select value={book.shelf} onChange={(e) => updateBookShelf(book, e.target.value)}>
 								<option value="move" disabled>
 									Move to...
 								</option>

@@ -17,19 +17,25 @@ const BooksApp = () => {
 	const [updateCount, setUpdateCount] = useState(0);
 
 	const updateBookShelf = (book, shelf) => {
-		// const books = [...allBooks];
-		// const bookIndex = books.findIndex((b) => b.id === book.id);
+		book.shelf = shelf;
+		const updatedBooks = [...allBooks, book];
 
-		// if (bookIndex === -1) {
-		// 	book.shelf = shelf;
-		// 	books.push(book);
-		// } else {
-		// 	books[bookIndex].shelf = shelf;
-		// }
+		const categorizeBooks = (bookShelvesObj, bookShelf) => {
+			return bookShelvesObj[bookShelf].map((id) => updatedBooks.find((book) => book.id === id));
+		};
 
-		// setAllBooks(books);
-		update(book, shelf);
-		setUpdateCount((curCount) => curCount + 1);
+		update(book, shelf).then((bookShelves) => {
+			const crb = categorizeBooks(bookShelves, "currentlyReading");
+			const rb = categorizeBooks(bookShelves, "read");
+			const wtrb = categorizeBooks(bookShelves, "wantToRead");
+
+			setBooksCurrentlyReading(crb);
+			setBooksRead(rb);
+			setBooksWantToRead(wtrb);
+
+			setAllBooks([...crb, ...rb, ...wtrb]);
+			setUpdateCount((curCount) => curCount + 1);
+		});
 	};
 
 	useEffect(() => {
@@ -39,7 +45,7 @@ const BooksApp = () => {
 			setBooksRead(books.filter((book) => book.shelf === "read"));
 			setBooksWantToRead(books.filter((book) => book.shelf === "wantToRead"));
 		});
-	}, [updateCount]);
+	}, []);
 
 	return (
 		<BrowserRouter>
@@ -49,17 +55,21 @@ const BooksApp = () => {
 					path="/"
 					element={
 						<Home
-							updateBookShelf={updateBookShelf}
-							updateCount={updateCount}
-							setAllBooks={setAllBooks}
 							allBooks={allBooks}
+							updateCount={updateCount}
 							booksCurrentlyReading={booksCurrentlyReading}
-							booksRead={booksRead}
 							booksWantToRead={booksWantToRead}
+							booksRead={booksRead}
+							setAllBooks={setAllBooks}
+							updateBookShelf={updateBookShelf}
 						/>
 					}
 				/>
-				<Route exact path="/search" element={<Search updateBookShelf={updateBookShelf} />} />
+				<Route
+					exact
+					path="/search"
+					element={<Search allBooks={allBooks} updateBookShelf={updateBookShelf} />}
+				/>
 			</Routes>
 		</BrowserRouter>
 	);
