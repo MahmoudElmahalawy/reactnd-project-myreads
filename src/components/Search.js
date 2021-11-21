@@ -6,12 +6,19 @@ import Book from "./Book";
 
 import { search } from "../BooksAPI";
 
-const Search = ({ updateBookShelf }) => {
+const Search = ({ allBooks, updateBookShelf }) => {
 	const [searchResult, setSearchResult] = useState(null);
 
 	const searchBooks = (e) => {
 		search(e.target.value).then((result) => {
-			if (result?.error) return setSearchResult([]);
+			if (result === undefined || result.error) return setSearchResult([]);
+
+			result = result.map((resBook) => {
+				const bookInOurList = allBooks.find((b) => b.id === resBook.id);
+				resBook.shelf = bookInOurList?.shelf ?? "none";
+				return resBook;
+			});
+
 			setSearchResult(result);
 		});
 	};
